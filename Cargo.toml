@@ -1,0 +1,6 @@
+[package]
+name = "wifi_drone"
+version = "0.1.0"
+authors = ["Robert Wettstädt <robert.wett@gmail.com>"]
+
+[dependencies]

@@ -18,7 +18,7 @@ impl Heartbeat {
             Err(e) => panic!("Error connecting to heartbeat socket: {}", e.description()),
         };
 
-        let data = constants::read_file("res/heartbeat.dat");
+        let data = constants::get_heartbeat();
 
         return Heartbeat { stream: stream, data: data };
     }

@@ -6,6 +6,10 @@ mod gamepad;
 mod heartbeat;
 mod video;
 
+use gamepad::Gamepad;
+use heartbeat::Heartbeat;
+use video::Video;
+
 use std::error::Error;
 
 use std::net::{TcpStream};
@@ -18,18 +22,18 @@ pub fn connect() {
         Ok(stream) => stream,
         Err(e) => panic!("Error connecting to handshake socket: {}", e.description()),
     };
-    let files = ["handshake", "video_1_1", "video_1_2"];
-    for file in files.into_iter() {
-        let path = format!("res/{}.dat", file).to_string();
-        match handshake_stream.write(constants::read_file(&path).as_slice()) {
-            Ok(_) => debug!("Sent {}", file),
-            Err(e) => panic!("Error writing {}: {}", file, e.description()),
+
+    let functions = [constants::get_handshake, constants::get_video_1_1, constants::get_video_1_2];
+    for index in 0..functions.len() {
+        match handshake_stream.write(functions[index]().as_slice()) {
+            Ok(_) => debug!("Sent {}", index),
+            Err(e) => panic!("Error writing {}: {}", index, e.description()),
         }
     }
 
-    gamepad::Gamepad::new().start();
-    heartbeat::Heartbeat::new().start();
-    video::Video::new().start();
+    Gamepad::new().start();
+    Heartbeat::new().start();
+    Video::new().start();
 }
 
 #[cfg(test)]

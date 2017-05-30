@@ -1,7 +1,8 @@
 [package]
 name = "wifi_drone"
-version = "0.1.0"
+version = "0.0.2"
 authors = ["Robert Wettstädt <robert.wett@gmail.com>"]
+keywords = ["drone", "wifi", "quadcopter", "robotics", "fpv"]
 
 [dependencies]
 log = "^0.3"

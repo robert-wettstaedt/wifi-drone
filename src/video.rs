@@ -5,7 +5,7 @@ use std::error::Error;
 use std::{thread, time};
 use std::net::TcpStream;
 use std::io::{Write, Read};
-use std::process::{Command};
+use std::process::Command;
 
 pub struct Video {
     input_stream: TcpStream,
@@ -33,7 +33,7 @@ impl Video {
     }
 
     pub fn start(self) {
-        self.start_streaming();
+        thread::spawn(move || self.start_streaming());
     }
 
     fn start_ffplay() {

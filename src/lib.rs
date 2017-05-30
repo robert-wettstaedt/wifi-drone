@@ -5,15 +5,15 @@ mod constants;
 mod gamepad;
 mod heartbeat;
 mod video;
+mod keyboard;
 
 use gamepad::Gamepad;
 use heartbeat::Heartbeat;
 use video::Video;
 
 use std::error::Error;
-
-use std::net::{TcpStream};
-use std::io::{Write};
+use std::net::TcpStream;
+use std::io::Write;
 
 pub fn connect() {
     env_logger::init().unwrap();
@@ -31,9 +31,9 @@ pub fn connect() {
         }
     }
 
-    Gamepad::new().start();
     Heartbeat::new().start();
     Video::new().start();
+    Gamepad::new().start();
 }
 
 #[cfg(test)]

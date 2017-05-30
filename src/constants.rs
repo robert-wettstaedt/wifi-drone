@@ -1,9 +1,4 @@
 use std::error::Error;
-use std::io::Read;
-use std::fs::{self, File};
-use std::env;
-use std::path::Path;
-use std::path::PathBuf;
 
 pub static DRONE_HOST: &'static str = "172.16.10.1";
 pub static DRONE_TCP_PORT: usize = 8888;
@@ -13,7 +8,6 @@ pub static FFPLAY_HOST: &'static str = "127.0.0.1";
 pub static FFPLAY_TCP_PORT: usize = 8889;
 
 static HANDSHAKE: &'static str = include_str!("../res/handshake.dat");
-static GAMEPAD: &'static str = include_str!("../res/gamepad.dat");
 static VIDEO_1_1: &'static str = include_str!("../res/video_1_1.dat");
 static VIDEO_1_2: &'static str = include_str!("../res/video_1_2.dat");
 static VIDEO_2: &'static str = include_str!("../res/video_2.dat");
@@ -21,10 +15,6 @@ static HEARTBEAT: &'static str = include_str!("../res/heartbeat.dat");
 
 pub fn get_handshake() -> Vec<u8> {
     return read_data(HANDSHAKE);
-}
-
-pub fn get_gamepad() -> Vec<u8> {
-    return read_data(GAMEPAD);
 }
 
 pub fn get_video_1_1() -> Vec<u8> {

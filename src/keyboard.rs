@@ -1,6 +1,6 @@
 extern crate glutin;
 
-use command::Command;
+use command::{Command, DroneMode};
 use self::glutin::*;
 
 pub struct Keyboard {
@@ -44,6 +44,7 @@ impl Keyboard {
                             VirtualKeyCode::D => cmd.roll = value,
                             VirtualKeyCode::A => cmd.roll = -value,
                             VirtualKeyCode::Space => cmd.toggle_mode(state == ElementState::Pressed),
+                            VirtualKeyCode::Escape => cmd.mode = DroneMode::Abort,
                             _ => (),
                         }
                     },

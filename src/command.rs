@@ -1,11 +1,12 @@
 use std::fmt;
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum DroneMode {
     Normal = 0,
     TakingOff = 1,
     Landing = 2,
     TookOff = 3, // Helper mode, doesn't exist on drone
+    Abort = 4,
 }
 
 pub struct Command {
@@ -28,6 +29,7 @@ impl Command {
             DroneMode::TakingOff => if is_toggling { () } else { self.mode = DroneMode::TookOff },
             DroneMode::TookOff   => if is_toggling { self.mode = DroneMode::Landing },
             DroneMode::Landing   => if is_toggling { () } else { self.mode = DroneMode::Normal },
+            DroneMode::Abort     => if is_toggling { self.mode = DroneMode::Normal },
         }
     }
 
@@ -53,7 +55,7 @@ impl Command {
             }
         }
 
-        self.as_array[5] = if self.mode as u8 > 2 { DroneMode::Normal as u8 } else { self.mode as u8 };
+        self.as_array[5] = if self.mode == DroneMode::TookOff { DroneMode::Normal as u8 } else { self.mode as u8 };
         self.as_array[6] = (self.as_array[1] ^ self.as_array[2] ^ self.as_array[3] ^ self.as_array[4] ^ self.as_array[5]) & 0xFF;
 
         self.as_array[7] = 0x99;

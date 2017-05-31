@@ -1,11 +1,12 @@
 #[macro_use] extern crate log;
 extern crate env_logger;
 
+mod command;
 mod constants;
 mod gamepad;
 mod heartbeat;
-mod video;
 mod keyboard;
+mod video;
 
 use gamepad::Gamepad;
 use heartbeat::Heartbeat;
@@ -36,12 +37,12 @@ pub fn connect() {
     Gamepad::new().start();
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_connect_valid() {
-        connect();
-    }
-}
+// #[cfg(test)]
+//mod tests {
+//    use super::*;
+//
+//    #[test]
+//    fn test_connect_valid() {
+//        connect();
+//    }
+//}

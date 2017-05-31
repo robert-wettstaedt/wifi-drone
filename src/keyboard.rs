@@ -1,6 +1,6 @@
 extern crate glutin;
 
-use gamepad::Move;
+use command::{Command, DroneMode};
 use self::glutin::*;
 
 pub struct Keyboard {
@@ -24,7 +24,7 @@ impl Keyboard {
         };
     }
 
-    pub fn get_pressed_keys(&mut self, cmd: &mut Move) {
+    pub fn get_pressed_keys(&mut self, cmd: &mut Command) {
         let events_loop = &mut self.events_loop;
 
         events_loop.poll_events(|event| {
@@ -43,7 +43,8 @@ impl Keyboard {
                             VirtualKeyCode::S => cmd.pitch = -value,
                             VirtualKeyCode::D => cmd.roll = value,
                             VirtualKeyCode::A => cmd.roll = -value,
-                            VirtualKeyCode::Space => cmd.take_off = state == ElementState::Pressed,
+                            VirtualKeyCode::Space => cmd.toggle_mode(state == ElementState::Pressed),
+                            VirtualKeyCode::Escape => cmd.mode = DroneMode::Abort,
                             _ => (),
                         }
                     },

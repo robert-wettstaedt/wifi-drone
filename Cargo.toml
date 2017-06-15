@@ -7,6 +7,7 @@ repository = "https://github.com/r-wettstaedt/wifi-drone"
 authors = ["Robert Wettstädt <robert.wett@gmail.com>"]
 keywords = ["drone", "wifi", "quadcopter", "robotics", "fpv"]
 description = "Connect to a wifi-controlled quadcopter to receive fpv and control it with your computer"
+build = "build.rs"
 
 [dependencies]
 log = "^0.3"

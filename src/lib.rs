@@ -1,6 +1,7 @@
 #[macro_use] extern crate log;
 extern crate env_logger;
 extern crate ffmpeg;
+extern crate glutin;
 //extern crate ffmpeg_sys as sys;
 
 mod command;
@@ -9,12 +10,12 @@ mod gamepad;
 mod heartbeat;
 mod keyboard;
 mod video;
-//mod window_manager;
+mod window_manager;
 
 use gamepad::Gamepad;
 use heartbeat::Heartbeat;
 use video::Video;
-//use window_manager::WindowManager;
+use window_manager::WindowManager;
 
 use std::error::Error;
 use std::net::TcpStream;
@@ -23,11 +24,12 @@ use std::thread;
 
 use ffmpeg::*;
 //use sys::*;
+use std::{ptr, env};
 use std::ffi::{CString, CStr};
-use std::ptr;
-use std::path::Path;
+use std::path::{Path, PathBuf};
+use std::fs::{self, File};
 
-fn spawn(codec: &mut decoder::Video, packet: &Packet) {
+fn spawn (codec: &mut decoder::Video, packet: &Packet, file: &mut File) {
 //    thread::spawn(move || {
 //        println!("stream index: {}", stream.index());
         println!("{}:{}", codec.width(), codec.height());
@@ -41,18 +43,21 @@ fn spawn(codec: &mut decoder::Video, packet: &Packet) {
                 converter.run(&decoded, &mut frame).unwrap();
 
                 let buf: &[u8] = frame.data(0);
+                file.write(buf);
             },
             Ok(false) => (),
             Err(ffmpeg::Error::Eof) => (),
             Err(error) => panic!("Error decoding packet: {:?}", error),
         }
+    file.write(b"\n\n");
 //    });
 }
 
 pub fn connect() {
     env_logger::init().unwrap();
 
-//    WindowManager::new().start();
+    WindowManager::new().start();
+
 
     let path: &str = "out/data.h264";
     let _path = path.to_owned();
@@ -82,10 +87,11 @@ pub fn connect() {
         }
     }
 
+    let mut file = File::create("out/data.txt").unwrap();
+
     // Iterate over the packets.
-    let mut i = 0;
     for (stream, packet) in context.packets() {
-        spawn(&mut codec, &packet);
+        spawn(&mut codec, &packet, &mut file);
     }
     loop {
 

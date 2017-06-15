@@ -29,12 +29,15 @@ use std::ffi::{CString, CStr};
 use std::path::{Path, PathBuf};
 use std::fs::{self, File};
 
-fn spawn (codec: &mut decoder::Video, packet: &Packet, file: &mut File) {
+fn spawn (codec: &mut decoder::Video, packet: &Packet, _file: &mut File, index: usize) {
 //    thread::spawn(move || {
 //        println!("stream index: {}", stream.index());
-        println!("{}:{}", codec.width(), codec.height());
+
+        let mut file = File::create("out/data.txt").unwrap();
+
+        println!("{} - {}:{}", index, codec.width(), codec.height());
         let mut decoded   = frame::Video::empty();
-        let mut converter = codec.converter(format::Pixel::BGRA).unwrap();
+        let mut converter = codec.converter(format::Pixel::RGBA).unwrap();
 
         match codec.decode(packet, &mut decoded) {
             Ok(true) => {
@@ -42,22 +45,33 @@ fn spawn (codec: &mut decoder::Video, packet: &Packet, file: &mut File) {
                 frame.clone_from(&decoded);
                 converter.run(&decoded, &mut frame).unwrap();
 
-                let buf: &[u8] = frame.data(0);
-                file.write(buf);
+                if index == 344 {
+                    let buf: &[u8] = frame.data(0);
+                    println!("buf: {}", buf.len());
+
+                    let mut i = 0;
+                    for b in buf {
+                        if i == 0 {
+                            file.write(format!("[{}, ", b.to_string()).as_bytes());
+                        } else if i < buf.len() - 1 {
+                            file.write(format!("{}, ", b.to_string()).as_bytes());
+                        } else {
+                            file.write(format!("{}]", b.to_string()).as_bytes());
+                        }
+
+                        i = i + 1;
+                    }
+                }
             },
             Ok(false) => (),
             Err(ffmpeg::Error::Eof) => (),
             Err(error) => panic!("Error decoding packet: {:?}", error),
         }
-    file.write(b"\n\n");
 //    });
 }
 
 pub fn connect() {
     env_logger::init().unwrap();
-
-    WindowManager::new().start();
-
 
     let path: &str = "out/data.h264";
     let _path = path.to_owned();
@@ -90,9 +104,15 @@ pub fn connect() {
     let mut file = File::create("out/data.txt").unwrap();
 
     // Iterate over the packets.
+    let mut index = 0;
     for (stream, packet) in context.packets() {
-        spawn(&mut codec, &packet, &mut file);
+        spawn(&mut codec, &packet, &mut file, index);
+        index = index + 1;
     }
+    println!("Done");
+
+    WindowManager::new().start();
+
     loop {
 
     }

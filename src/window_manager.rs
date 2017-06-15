@@ -23,7 +23,7 @@ impl WindowManager {
 
         let window = WindowBuilder::new()
             .with_title("FPV")
-            .with_dimensions(800, 600)
+            .with_dimensions(720, 576)
             .build(&events_loop)
             .unwrap();
 
@@ -40,21 +40,27 @@ impl WindowManager {
 
         println!("OpenGL version {}", version);
 
-        let width: i32 = 4;
-        let height: i32 = 4;
-        let pixels: [f32; 48] = [
-            1.0, 0.0, 0.0,   0.0, 1.0, 1.0,   1.0, 0.0, 0.0,   0.0, 1.0, 1.0,
-            0.0, 1.0, 1.0,   1.0, 0.0, 0.0,   0.0, 1.0, 1.0,   1.0, 0.0, 0.0,
-            1.0, 0.0, 0.0,   0.0, 1.0, 1.0,   1.0, 0.0, 0.0,   0.0, 1.0, 1.0,
-            0.0, 1.0, 1.0,   1.0, 0.0, 0.0,   0.0, 1.0, 1.0,   1.0, 0.0, 0.0
-        ];
+//        const WIDTH: i32 = 4;
+//        const HEIGHT: i32 = 4;
+//        let pixels: [u8; (WIDTH * HEIGHT * 4) as usize] = [
+//            255,   0,   0, 255,     0, 255, 255, 255,   255,   0,   0, 255,     0, 255, 255, 255,
+//              0, 255, 255, 255,   255,   0,   0, 255,     0, 255, 255, 255,   255,   0,   0, 255,
+//            255,   0,   0, 255,     0, 255, 255, 255,   255,   0,   0, 255,     0, 255, 255, 255,
+//              0, 255, 255, 255,   255,   0,   0, 255,     0, 255, 255, 255,   255,   0,   0, 255
+//        ];
+
+        const WIDTH: i32 = 720;
+        const HEIGHT: i32 = 576;
+        let pixels: [u8; (WIDTH * HEIGHT * 4) as usize] = include!("../out/data.txt");
+
+        println!("pixels - length: {} - [{}, {}, {}, {}, ...]", pixels.len(), pixels[0], pixels[1], pixels[2], pixels[3]);
 
         let vertices: [f32; 28] = [
             //  Position      Color    Texcoords
-            -0.5,  0.5, 1.0, 0.0, 0.0, 0.0, 0.0, // Top-left
-             0.5,  0.5, 0.0, 1.0, 0.0, 1.0, 0.0, // Top-right
-             0.5, -0.5, 0.0, 0.0, 1.0, 1.0, 1.0, // Bottom-right
-            -0.5, -0.5, 1.0, 1.0, 1.0, 0.0, 1.0  // Bottom-left
+            -1.0,  1.0, 1.0, 0.0, 0.0, 0.0, 0.0, // Top-left
+             1.0,  1.0, 0.0, 1.0, 0.0, 1.0, 0.0, // Top-right
+             1.0, -1.0, 0.0, 0.0, 1.0, 1.0, 1.0, // Bottom-right
+            -1.0, -1.0, 1.0, 1.0, 1.0, 0.0, 1.0  // Bottom-left
         ];
 
         let elements = [
@@ -129,7 +135,7 @@ impl WindowManager {
 
             gl.ActiveTexture(gl::TEXTURE0);
             gl.BindTexture(gl::TEXTURE_2D, textures);
-            gl.TexImage2D(gl::TEXTURE_2D, 0, gl::RGB as i32, width, height, 0, gl::RGB, gl::FLOAT, pixels.as_ptr() as *const _);
+            gl.TexImage2D(gl::TEXTURE_2D, 0, gl::RGBA as i32, WIDTH, HEIGHT, 0, gl::RGBA, gl::UNSIGNED_BYTE, pixels.as_ptr() as *const _);
             gl.Uniform1i(gl.GetUniformLocation(shader_program, b"tex\0".as_ptr() as *const _), 0);
 
             gl.TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_WRAP_S, gl::CLAMP_TO_EDGE as i32);

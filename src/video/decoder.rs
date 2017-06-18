@@ -2,12 +2,12 @@ extern crate ffmpeg;
 
 use super::Renderer;
 
-use ffmpeg::*;
+use self::ffmpeg::*;
 use std::thread;
 
 pub struct Decoder {
     codec: decoder::Video,
-    context: format::context::Input
+    context: format::context::Input,
 }
 
 impl Decoder {
@@ -16,20 +16,11 @@ impl Decoder {
         format::register_all();
         println!("format::register_all");
 
-        let _path = path.to_owned();
-        thread::spawn(move || {
-            println!("{}", _path);
-            let context = match format::input(&_path) {
-                Ok(context) => context,
-                Err(e) => panic!("Error opening h.264 stream with ffmpeg: {:?}", e),
-            };
-            println!("format::input");
-        });
-        println!("thread::spawn");
         let context = match format::input(&path) {
             Ok(context) => context,
             Err(e) => panic!("Error opening h.264 stream with ffmpeg: {:?}", e),
         };
+        println!("format::input 2");
 
         let codec: decoder::Video;
         {

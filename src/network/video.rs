@@ -14,14 +14,14 @@ pub struct Video {
 
 impl Video {
     pub fn new() -> Video {
-        let input_stream = match TcpStream::connect(format!("{}:{}", constants::DRONE_HOST, constants::DRONE_TCP_PORT)) {
-            Ok(stream) => stream,
-            Err(e) => panic!("Couldn't connect to video input socket: {}", e.description()),
-        };
-
         let output_stream = match TcpStream::connect(format!("{}:{}", constants::FFMPEG_HOST, constants::FFMPEG_TCP_PORT)) {
             Ok(stream) => stream,
             Err(e) => panic!("Couldn't connect to video output socket: {}", e.description()),
+        };
+
+        let input_stream = match TcpStream::connect(format!("{}:{}", constants::DRONE_HOST, constants::DRONE_TCP_PORT)) {
+            Ok(stream) => stream,
+            Err(e) => panic!("Couldn't connect to video input socket: {}", e.description()),
         };
 
         let data = constants::get_video_2();

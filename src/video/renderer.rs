@@ -57,16 +57,16 @@ mod gl {
     include!(concat!(env!("OUT_DIR"), "/test_gl_bindings.rs"));
 }
 
-pub struct Renderer {
-    window_manager: WindowManager,
+pub struct Renderer <'a> {
+    window_manager: &'a WindowManager,
     gl: gl::Gl
 }
 
-impl Renderer {
-    pub fn new(window_manager: WindowManager) -> Renderer {
+impl <'a> Renderer <'a> {
+    pub fn new(window_manager: &WindowManager) -> Renderer {
         let gl = gl::Gl::load_with(|ptr| (&(window_manager.window)).get_proc_address(ptr) as *const _);
 
-        let mut renderer = Renderer { window_manager: window_manager, gl: gl };
+        let mut renderer = Renderer { window_manager: &window_manager, gl: gl };
         renderer.prepare_gl();
 
         renderer

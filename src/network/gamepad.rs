@@ -1,37 +1,35 @@
 use constants;
 use controls::command::Command;
-use controls::keyboard::Keyboard;
+use window_manager::WindowManager;
 
 use std::error::Error;
 use std::{thread, time};
 use std::net::UdpSocket;
 
-pub struct Gamepad {
+pub struct Gamepad <'a>  {
     socket: UdpSocket,
+    window_manager: &'a WindowManager
 }
 
-impl Gamepad {
-    pub fn new() -> Gamepad {
+impl <'a> Gamepad <'a> {
+    pub fn new(window_manager: &WindowManager) -> Gamepad {
         let socket = match UdpSocket::bind("0.0.0.0:0") {
             Ok(socket) => socket,
             Err(e) => panic!("Error connecting to gamepad socket: {}", e.description()),
         };
 
-        return Gamepad { socket: socket };
+        return Gamepad { socket, window_manager: &window_manager };
     }
 
     pub fn start(mut self) {
-        let mut keyboard = Keyboard::new();
-        keyboard.start();
-
-        self.start_input_listener(keyboard);
+        self.start_input_listener();
     }
 
-    fn start_input_listener(&mut self, mut keyboard: Keyboard) {
+    fn start_input_listener(&mut self) {
         let mut cmd = Command::new();
 
         loop {
-            keyboard.get_pressed_keys(&mut cmd);
+            self.window_manager.get_pressed_keys(&mut cmd);
             println!("{:?}", cmd);
 
             self.write(&mut cmd);

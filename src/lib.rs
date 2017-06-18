@@ -1,7 +1,5 @@
 #[macro_use] extern crate log;
 extern crate env_logger;
-extern crate ffmpeg;
-extern crate glutin;
 
 pub mod constants;
 pub mod controls;
@@ -17,13 +15,12 @@ pub fn connect() {
 
     let window_manager = WindowManager::new();
     println!("WindowManager::new");
-    let mut video = Video::new(window_manager);
+
+    let video = Video::new(&window_manager);
     println!("Video::new");
 
-    network::start();
+    network::start(&window_manager);
     println!("network::start");
-    controls::start();
-    println!("controls::start");
 
     video.start();
     println!("video.start");

@@ -3,6 +3,8 @@ pub mod video;
 pub mod gamepad;
 
 use super::constants;
+use super::window_manager::WindowManager;
+
 use self::heartbeat::Heartbeat;
 use self::video::Video;
 use self::gamepad::Gamepad;
@@ -11,7 +13,8 @@ use std::error::Error;
 use std::net::TcpStream;
 use std::io::Write;
 
-pub fn start() {
+pub fn start(window_manager: &WindowManager) {
+    println!("Connecting handshake stream ..");
     let mut handshake_stream = match TcpStream::connect(format!("{}:{}", constants::DRONE_HOST, constants::DRONE_TCP_PORT)) {
         Ok(stream) => stream,
         Err(e) => panic!("Error connecting to handshake socket: {}", e.description()),
@@ -25,7 +28,8 @@ pub fn start() {
         }
     }
 
+    println!("Connecting util streams ..");
     Heartbeat::new().start();
     Video::new().start();
-    Gamepad::new().start();
+    Gamepad::new(window_manager).start();
 }

@@ -13,5 +13,4 @@ build = "build.rs"
 log = "^0.3"
 env_logger = "^0.4"
 glutin = "^0.8"
-ffmpeg = { git = "https://github.com/meh/rust-ffmpeg" }#"0.2.0-alpha.2"
-#ffmpeg-sys = "3.2"
+ffmpeg = { git = "https://github.com/meh/rust-ffmpeg" }

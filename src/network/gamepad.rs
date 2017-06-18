@@ -1,6 +1,6 @@
 use constants;
-use command::Command;
-use keyboard::Keyboard;
+use controls::command::Command;
+use controls::keyboard::Keyboard;
 
 use std::error::Error;
 use std::{thread, time};

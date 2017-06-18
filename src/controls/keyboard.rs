@@ -1,6 +1,6 @@
 extern crate glutin;
 
-use command::{Command, DroneMode};
+use super::command::{Command, DroneMode};
 use self::glutin::*;
 
 pub struct Keyboard {

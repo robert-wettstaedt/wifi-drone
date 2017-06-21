@@ -23,13 +23,9 @@ pub fn input_with(path: &str) -> Result<format::context::Input, Error> {
         let fmt = sys::av_find_input_format(format.as_ptr());
 
         let mut ps   = ptr::null_mut();
-        let     path = CString::new(path).unwrap();
+        let path = CString::new(path).unwrap();
         let mut opts = options.disown();
-
-        println!("input_with");
-
-        let     res  = sys::avformat_open_input(&mut ps, path.as_ptr(), fmt, &mut opts);
-        println!("sys::avformat_open_input");
+        let res  = sys::avformat_open_input(&mut ps, path.as_ptr(), fmt, &mut opts);
 
         Dictionary::own(opts);
 

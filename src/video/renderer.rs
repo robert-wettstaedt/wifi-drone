@@ -4,7 +4,6 @@ use window_manager::WindowManager;
 
 use std::ffi::CStr;
 use std::{mem, ptr};
-use std::{thread, time};
 
 const VS_SRC: &'static [u8] = b"
     #version 150 core
@@ -167,12 +166,10 @@ impl <'a> Renderer <'a> {
             self.gl.DrawElements(self::gl::TRIANGLES, 6, self::gl::UNSIGNED_INT, ptr::null());
         }
 
+        self.window_manager.update_pressed_keys();
         match self.window_manager.window.swap_buffers() {
             Ok(_) => (),
             Err(e) => println!("Error swapping buffers: {}", e),
         }
-
-        let interval = time::Duration::from_millis(50);
-        thread::sleep(interval);
     }
 }

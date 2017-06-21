@@ -1,5 +1,6 @@
 #[macro_use] extern crate log;
 extern crate env_logger;
+extern crate glutin;
 
 pub mod constants;
 pub mod controls;
@@ -7,23 +8,21 @@ pub mod network;
 pub mod video;
 pub mod window_manager;
 
+use glutin::{ElementState, VirtualKeyCode};
 use window_manager::WindowManager;
 use video::Video;
+
+use std::sync::mpsc::*;
 
 pub fn connect() {
     env_logger::init().unwrap();
 
-    let window_manager = WindowManager::new();
-    println!("WindowManager::new");
+    let (keypress_tx, keypress_rx): (Sender<(ElementState, VirtualKeyCode)>, Receiver<(ElementState, VirtualKeyCode)>) = channel();
 
+    let window_manager = WindowManager::new(keypress_tx);
     let video = Video::new(&window_manager);
-    println!("Video::new");
-
-    network::start(&window_manager);
-    println!("network::start");
-
-    video.start();
-    println!("video.start");
+    network::start(keypress_rx);
+    video.render_video();
 }
 
  #[cfg(test)]

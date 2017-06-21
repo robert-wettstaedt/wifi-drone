@@ -7,6 +7,8 @@ use self::renderer::Renderer;
 use super::window_manager::WindowManager;
 
 use std::thread;
+use std::time::Duration;
+use std::sync::mpsc::{channel, Sender, Receiver};
 
 pub struct Video <'a> {
     renderer: Renderer<'a>,
@@ -19,16 +21,22 @@ impl <'a> Video <'a> {
         let path = format!("tcp://{}:{}?listen", constants::FFMPEG_HOST, constants::FFMPEG_TCP_PORT);
 //        let path = format!("out/data.h264");
 
+        let (decoder_tx, decoder_rx): (Sender<()>, Receiver<()>) = channel();
+
         let renderer = Renderer::new(&window_manager);
         let handle: thread::JoinHandle<Decoder> = thread::spawn(move || {
-            Decoder::new(path.as_str())
+            Decoder::new(path.as_str(), decoder_tx)
         });
+
+        match decoder_rx.recv() {
+            Ok(_) => (),
+            Err(_) => thread::sleep(Duration::from_millis(500)),
+        }
 
         Video { renderer, decoder: None, decoder_thread_handle: handle }
     }
 
-    pub fn start(mut self) {
-        println!("joining");
+    pub fn render_video(mut self) {
         match self.decoder_thread_handle.join() {
             Ok(decoder) => {
                 self.decoder = Some(decoder);

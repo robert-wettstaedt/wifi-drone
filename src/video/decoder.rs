@@ -3,10 +3,10 @@ extern crate ffmpeg;
 use super::Renderer;
 
 use self::ffmpeg::*;
-use std::ffi::{CString, CStr};
-use std::str::from_utf8_unchecked;
-use std::{ptr, thread};
-use std::path::Path;
+
+use std::ffi::CString;
+use std::ptr;
+use std::sync::mpsc::Sender;
 
 pub struct Decoder {
     codec: decoder::Video,
@@ -25,7 +25,11 @@ pub fn input_with(path: &str) -> Result<format::context::Input, Error> {
         let mut ps   = ptr::null_mut();
         let     path = CString::new(path).unwrap();
         let mut opts = options.disown();
+
+        println!("input_with");
+
         let     res  = sys::avformat_open_input(&mut ps, path.as_ptr(), fmt, &mut opts);
+        println!("sys::avformat_open_input");
 
         Dictionary::own(opts);
 
@@ -43,20 +47,19 @@ pub fn input_with(path: &str) -> Result<format::context::Input, Error> {
 }
 
 impl Decoder {
-    pub fn new(path: &str) -> Decoder {
+    pub fn new(path: &str, decoder_tx: Sender<()>) -> Decoder {
         format::network::init();
         format::register_all();
-        println!("format::register_all");
+
+        decoder_tx.send(()).unwrap();
 
         let context = match input_with(&path) {
             Ok(context) => context,
             Err(e) => panic!("Error opening h.264 stream with ffmpeg: {:?}", e),
         };
-        println!("format::input 2");
 
         let codec: decoder::Video;
         {
-            // Spawn the video decoder.
             let stream = context.streams().find(|s| s.codec().medium() == media::Type::Video);
             if stream.is_some() {
                 match stream.unwrap().codec().decoder().video() {
@@ -67,7 +70,6 @@ impl Decoder {
                 panic!("No video stream found");
             }
         }
-        println!("context.streams");
 
         Decoder { context, codec }
     }
@@ -76,8 +78,6 @@ impl Decoder {
         let mut decoded   = frame::Video::empty();
         let mut converter = self.codec.converter(format::Pixel::RGBA).unwrap();
         let mut index = 0;
-
-        println!("{}:{}", self.codec.width(), self.codec.height());
 
         for (_, packet) in self.context.packets() {
             match self.codec.decode(&packet, &mut decoded) {

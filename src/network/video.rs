@@ -30,10 +30,10 @@ impl Video {
     }
 
     pub fn start(self) {
-        thread::spawn(move || self.start_streaming());
+        thread::spawn(move || self.start_async());
     }
 
-    fn start_streaming(mut self) {
+    fn start_async(mut self) {
         match self.input_stream.write(self.data.as_slice()) {
             Ok(_) => debug!("Sent video 2"),
             Err(e) => panic!("Error writing video 2: {}", e.description()),

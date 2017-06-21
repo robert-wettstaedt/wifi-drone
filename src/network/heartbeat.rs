@@ -1,7 +1,6 @@
 use constants;
 
 use std::error::Error;
-
 use std::{thread, time};
 use std::net::TcpStream;
 use std::io::{Write, Read};

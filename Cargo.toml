@@ -1,6 +1,6 @@
 [package]
 name = "wifi_drone"
-version = "0.0.3"
+version = "0.1.0"
 license = "MIT/Apache-2.0"
 homepage = "https://github.com/r-wettstaedt/wifi-drone"
 repository = "https://github.com/r-wettstaedt/wifi-drone"

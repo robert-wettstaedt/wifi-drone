@@ -1,6 +1,7 @@
 extern crate ffmpeg;
 
 use super::Renderer;
+use super::VideoListener;
 
 use self::ffmpeg::*;
 
@@ -70,7 +71,7 @@ impl Decoder {
         Decoder { context, codec }
     }
 
-    pub fn start(&mut self, renderer: &mut Renderer) {
+    pub fn start(&mut self, renderer: &mut Renderer, listener: VideoListener) {
         let mut decoded   = frame::Video::empty();
         let mut converter = self.codec.converter(format::Pixel::RGBA).unwrap();
         let mut index = 0;
@@ -82,7 +83,9 @@ impl Decoder {
                     frame.clone_from(&decoded);
                     converter.run(&decoded, &mut frame).unwrap();
 
-                    let buf: &[u8] = frame.data(0);
+                    let mut buf: &mut [u8] = frame.data_mut(0);
+                    (listener.callback)(&mut buf, self.codec.width(), self.codec.height());
+
                     renderer.render(buf, self.codec.width(), self.codec.height());
                 },
                 Ok(false) => println!("Error false"),

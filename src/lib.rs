@@ -14,7 +14,7 @@ use video::Video;
 
 use std::sync::mpsc::*;
 
-pub fn connect() {
+pub fn connect(listener: video::VideoListener) {
     env_logger::init().unwrap();
 
     let (keypress_tx, keypress_rx): (Sender<(ElementState, VirtualKeyCode)>, Receiver<(ElementState, VirtualKeyCode)>) = channel();
@@ -31,6 +31,9 @@ mod tests {
 
     #[test]
     fn test_connect_valid() {
-        connect();
+        connect(video::VideoListener::new(cb));
     }
+
+     fn cb(data: &mut [u8], width: u32, height: u32) {
+     }
 }

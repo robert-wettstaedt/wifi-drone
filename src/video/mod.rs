@@ -10,6 +10,18 @@ use std::thread;
 use std::time::Duration;
 use std::sync::mpsc::{channel, Sender, Receiver};
 
+pub type Callback = fn(data: &mut [u8], width: u32, height: u32);
+
+pub struct VideoListener {
+    pub callback: Callback
+}
+
+impl VideoListener {
+    pub fn new(callback: Callback) -> VideoListener {
+        VideoListener { callback }
+    }
+}
+
 pub struct Video <'a> {
     renderer: Renderer<'a>,
     decoder: Option<Decoder>,
@@ -36,11 +48,11 @@ impl <'a> Video <'a> {
         Video { renderer, decoder: None, decoder_thread_handle: handle }
     }
 
-    pub fn render_video(mut self) {
+    pub fn render_video(mut self, listener: VideoListener) {
         match self.decoder_thread_handle.join() {
             Ok(decoder) => {
                 self.decoder = Some(decoder);
-                self.decoder.unwrap().start(&mut self.renderer);
+                self.decoder.unwrap().start(&mut self.renderer, listener);
             },
             Err(e) => println!("Error joining thread: {:?}", e),
         }

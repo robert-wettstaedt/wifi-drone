@@ -22,7 +22,7 @@ pub fn connect(listener: video::VideoListener) {
     let window_manager = WindowManager::new(keypress_tx);
     let video = Video::new(&window_manager);
     network::start(keypress_rx);
-    video.render_video();
+    video.render_video(listener);
 }
 
  #[cfg(test)]
@@ -34,6 +34,6 @@ mod tests {
         connect(video::VideoListener::new(cb));
     }
 
-     fn cb(data: &mut [u8], width: u32, height: u32) {
-     }
+    fn cb(data: &mut [u8], width: u32, height: u32) {
+    }
 }

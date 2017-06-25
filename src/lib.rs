@@ -30,6 +30,7 @@ mod tests {
     use super::*;
 
     #[test]
+    #[should_panic]
     fn test_connect_valid() {
         connect(video::VideoListener::new(cb));
     }

@@ -22,10 +22,6 @@ impl WindowManager {
             .build(&events_loop)
             .unwrap();
 
-        let _ = unsafe {
-            window.make_current()
-        };
-
         WindowManager { window, events_loop, keypress_tx, last_update: SystemTime::now() }
     }
 

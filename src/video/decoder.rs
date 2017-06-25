@@ -76,6 +76,8 @@ impl Decoder {
         let mut converter = self.codec.converter(format::Pixel::RGBA).unwrap();
         let mut index = 0;
 
+        renderer.prepare_gl();
+
         for (_, packet) in self.context.packets() {
             match self.codec.decode(&packet, &mut decoded) {
                 Ok(true) => {
@@ -88,7 +90,7 @@ impl Decoder {
 
                     renderer.render(buf, self.codec.width(), self.codec.height());
                 },
-                Ok(false) => println!("Error false"),
+                Ok(false) => (),
                 Err(ffmpeg::Error::Eof) => println!("Error::Eof"),
                 Err(error) => panic!("Error decoding packet: {:?}", error),
             }

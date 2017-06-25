@@ -57,14 +57,13 @@ pub struct Renderer <'a> {
 
 impl <'a> Renderer <'a> {
     pub fn new(window_manager: &WindowManager) -> Renderer {
-        let mut renderer = Renderer { window_manager: &window_manager };
-        renderer.prepare_gl();
-
-        renderer
+        Renderer { window_manager: &window_manager }
     }
 
-    fn prepare_gl(&mut self) {
+    pub fn prepare_gl(&mut self) {
         unsafe {
+            let _ = self.window_manager.window.make_current();
+
             gl::load_with(|symbol| self.window_manager.window.get_proc_address(symbol) as *const _);
 
             let data = CStr::from_ptr(gl::GetString(gl::VERSION) as *const _).to_bytes().to_vec();

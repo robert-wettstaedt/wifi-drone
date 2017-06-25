@@ -1,5 +1,7 @@
 sudo: required
 
+os: osx
+
 language: rust
 
 rust:
@@ -13,8 +15,7 @@ matrix:
 
 before_install:
   - if [[ $TRAVIS_OS_NAME == 'linux' ]]; then ./.travis/install_linux.sh; fi
-  - if [[ $TRAVIS_OS_NAME == 'osx' ]]; then brew update; fi
-  - if [[ $TRAVIS_OS_NAME == 'osx' ]]; then brew install yasm; fi
+  - if [[ $TRAVIS_OS_NAME == 'osx' ]]; then ./.travis/install_osx.sh; fi
   - sleep 10
   - echo == End of before_install ==
 

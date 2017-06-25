@@ -1,6 +1,6 @@
 [package]
 name = "wifi_drone"
-version = "0.0.3"
+version = "0.1.1"
 license = "MIT/Apache-2.0"
 homepage = "https://github.com/r-wettstaedt/wifi-drone"
 repository = "https://github.com/r-wettstaedt/wifi-drone"
@@ -12,3 +12,5 @@ description = "Connect to a wifi-controlled quadcopter to receive fpv and contro
 log = "^0.3"
 env_logger = "^0.4"
 glutin = "^0.8"
+gl = "^0.6"
+ffmpeg = { git = "https://github.com/meh/rust-ffmpeg" }

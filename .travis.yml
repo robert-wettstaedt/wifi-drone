@@ -1,0 +1,30 @@
+sudo: required
+
+os: osx
+
+language: rust
+
+rust:
+  - stable
+  - beta
+  - nightly
+
+matrix:
+  allow_failures:
+    - rust: nightly
+
+before_install:
+  - if [[ $TRAVIS_OS_NAME == 'linux' ]]; then ./.travis/install_linux.sh; fi
+  - if [[ $TRAVIS_OS_NAME == 'osx' ]]; then ./.travis/install_osx.sh; fi
+  - sleep 10
+  - echo == End of before_install ==
+
+before_deploy:
+  - cargo package
+
+after_deploy:
+  - cargo publish --token "$CRATES_IO_TOKEN"
+
+after_failure:
+  - sleep 10
+  - echo == End of test log ==

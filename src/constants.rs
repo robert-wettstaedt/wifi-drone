@@ -4,8 +4,8 @@ pub static DRONE_HOST: &'static str = "172.16.10.1";
 pub static DRONE_TCP_PORT: usize = 8888;
 pub static DRONE_UDP_PORT: usize = 8895;
 
-pub static FFPLAY_HOST: &'static str = "127.0.0.1";
-pub static FFPLAY_TCP_PORT: usize = 8889;
+pub static FFMPEG_HOST: &'static str = "127.0.0.1";
+pub static FFMPEG_TCP_PORT: usize = 8889;
 
 static HANDSHAKE: &'static str = include_str!("../res/handshake.dat");
 static VIDEO_1_1: &'static str = include_str!("../res/video_1_1.dat");

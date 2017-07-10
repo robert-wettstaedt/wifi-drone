@@ -64,8 +64,6 @@ impl Video {
             }
 
             if buffer_size > 0 && buffer_size != 106 {
-                debug!("Buffer size video input socket: {:?}", buffer_size);
-
                 match self.output_stream.write(&buffer[0..buffer_size]) {
                     Ok(_) => (),
                     Err(e) => println!("Error writing video output socket: {:?}", e.description()),

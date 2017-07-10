@@ -20,6 +20,7 @@ pub fn input_with(path: &str) -> Result<format::context::Input, Error> {
     options.set("video_codec", "h264");
 
     unsafe {
+        sys::av_log_set_level(sys::AV_LOG_PANIC);
         let format = CString::new("h264").unwrap();
         let fmt = sys::av_find_input_format(format.as_ptr());
 

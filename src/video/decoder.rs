@@ -73,7 +73,7 @@ impl Decoder {
 
     pub fn start(&mut self, renderer: &mut Renderer, listener: VideoListener) {
         let mut decoded   = frame::Video::empty();
-        let mut converter = self.codec.converter(format::Pixel::RGBA).unwrap();
+        let mut converter = self.codec.converter(format::Pixel::BGRA).unwrap();
         let mut index = 0;
 
         renderer.prepare_gl();

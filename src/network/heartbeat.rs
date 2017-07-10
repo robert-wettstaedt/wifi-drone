@@ -23,7 +23,10 @@ impl Heartbeat {
     }
 
     pub fn start(self) {
-        thread::spawn(move || self.start_async());
+        match thread::Builder::new().name("network::heartbeat".to_string()).spawn(move || self.start_async()) {
+            Ok(_) => (),
+            Err(_) => (),
+        }
     }
 
     fn start_async(mut self) {

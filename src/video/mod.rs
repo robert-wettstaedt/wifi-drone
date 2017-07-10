@@ -34,9 +34,14 @@ impl <'a> Video <'a> {
         let _path = path.to_owned();
 
         let renderer = Renderer::new(&window_manager);
-        let handle: thread::JoinHandle<Decoder> = thread::spawn(move || {
+
+        let builder = thread::Builder::new().name("video::mod".to_string());
+        let handle: thread::JoinHandle<Decoder> = match builder.spawn(move || {
             Decoder::new(_path.as_str(), decoder_tx)
-        });
+        }) {
+            Ok(handle) => handle,
+            Err(e) => panic!("Could not spawn video::mod thread: {:?}", e),
+        };
 
         match decoder_rx.recv() {
             Ok(_) => (),

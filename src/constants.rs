@@ -13,6 +13,10 @@ static VIDEO_1_2: &'static str = include_str!("../res/video_1_2.dat");
 static VIDEO_2: &'static str = include_str!("../res/video_2.dat");
 static HEARTBEAT: &'static str = include_str!("../res/heartbeat.dat");
 
+pub fn get_tcp_path() -> String {
+    format!("tcp://{}:{}?listen", FFMPEG_HOST, FFMPEG_TCP_PORT)
+}
+
 pub fn get_handshake() -> Vec<u8> {
     return read_data(HANDSHAKE);
 }

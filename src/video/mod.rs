@@ -29,15 +29,13 @@ pub struct Video <'a> {
 }
 
 impl <'a> Video <'a> {
-    pub fn new(window_manager: &WindowManager) -> Video {
-        let path = format!("tcp://{}:{}?listen", constants::FFMPEG_HOST, constants::FFMPEG_TCP_PORT);
-//        let path = format!("out/data.h264");
-
+    pub fn new(path: &str, window_manager: &'a WindowManager) -> Video <'a> {
         let (decoder_tx, decoder_rx): (Sender<()>, Receiver<()>) = channel();
+        let _path = path.to_owned();
 
         let renderer = Renderer::new(&window_manager);
         let handle: thread::JoinHandle<Decoder> = thread::spawn(move || {
-            Decoder::new(path.as_str(), decoder_tx)
+            Decoder::new(_path.as_str(), decoder_tx)
         });
 
         match decoder_rx.recv() {

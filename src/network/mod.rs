@@ -7,14 +7,14 @@ use super::glutin::{ElementState, VirtualKeyCode};
 
 use self::heartbeat::Heartbeat;
 use self::video::Video;
-use self::gamepad::Gamepad;
+use self::gamepad::{Gamepad, CommandListener};
 
 use std::error::Error;
 use std::net::TcpStream;
 use std::io::Write;
 use std::sync::mpsc::Receiver;
 
-pub fn start(keypress_rx: Receiver<(ElementState, VirtualKeyCode)>) {
+pub fn start(keypress_rx: Receiver<(ElementState, VirtualKeyCode)>, command_listener: CommandListener) {
     let mut handshake_stream = match TcpStream::connect(format!("{}:{}", constants::DRONE_HOST, constants::DRONE_TCP_PORT)) {
         Ok(stream) => stream,
         Err(e) => panic!("Error connecting to handshake socket: {}", e.description()),
@@ -30,5 +30,5 @@ pub fn start(keypress_rx: Receiver<(ElementState, VirtualKeyCode)>) {
 
     Heartbeat::new().start();
     Video::new().start();
-    Gamepad::new(keypress_rx).start();
+    Gamepad::new(keypress_rx, command_listener).start();
 }

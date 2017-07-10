@@ -7,19 +7,32 @@ use std::thread;
 use std::net::UdpSocket;
 use std::sync::mpsc::Receiver;
 
+pub type Callback = fn(command: &mut Command);
+
+pub struct CommandListener {
+    pub callback: Callback
+}
+
+impl CommandListener {
+    pub fn new(callback: Callback) -> CommandListener {
+        CommandListener { callback }
+    }
+}
+
 pub struct Gamepad  {
     socket: UdpSocket,
-    keypress_rx: Receiver<(ElementState, VirtualKeyCode)>
+    keypress_rx: Receiver<(ElementState, VirtualKeyCode)>,
+    command_listener: CommandListener
 }
 
 impl Gamepad {
-    pub fn new(keypress_rx: Receiver<(ElementState, VirtualKeyCode)>) -> Gamepad {
+    pub fn new(keypress_rx: Receiver<(ElementState, VirtualKeyCode)>, command_listener: CommandListener) -> Gamepad {
         let socket = match UdpSocket::bind("0.0.0.0:0") {
             Ok(socket) => socket,
             Err(e) => panic!("Error connecting to gamepad socket: {}", e.description()),
         };
 
-        return Gamepad { socket, keypress_rx };
+        return Gamepad { socket, keypress_rx, command_listener };
     }
 
     pub fn start(self) {
@@ -48,6 +61,7 @@ impl Gamepad {
                 _ => (),
             }
 
+            (self.command_listener.callback)(&mut cmd);
             println!("{:?}", cmd);
 
             self.write(&mut cmd);

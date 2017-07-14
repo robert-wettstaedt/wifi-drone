@@ -13,4 +13,7 @@ log = "^0.3"
 env_logger = "^0.4"
 glutin = "^0.8"
 gl = "^0.6"
-ffmpeg = { git = "https://github.com/meh/rust-ffmpeg" }
+
+[dependencies.ffmpeg]
+git = "https://github.com/meh/rust-ffmpeg"
+rev = "27d1e7a3fac15908aa4739bf70f6aaa2d69a61ba"

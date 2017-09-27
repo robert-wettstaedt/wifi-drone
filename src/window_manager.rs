@@ -8,12 +8,13 @@ static UPDATE_INTERVAL: u64 = 50;
 pub struct WindowManager {
     pub window: Window,
     events_loop: EventsLoop,
-    keypress_tx: Sender<(ElementState, VirtualKeyCode)>,
+    pressed_keys: Vec<VirtualKeyCode>,
+    keypress_tx: Sender<Vec<VirtualKeyCode>>,
     last_update: SystemTime,
 }
 
 impl WindowManager {
-    pub fn new(keypress_tx: Sender<(ElementState, VirtualKeyCode)>) -> WindowManager {
+    pub fn new(keypress_tx: Sender<Vec<VirtualKeyCode>>) -> WindowManager {
         let events_loop = EventsLoop::new();
 
         let window = WindowBuilder::new()
@@ -22,37 +23,63 @@ impl WindowManager {
             .build(&events_loop)
             .unwrap();
 
-        WindowManager { window, events_loop, keypress_tx, last_update: SystemTime::now() }
+        WindowManager { window, events_loop, keypress_tx, last_update: SystemTime::now(), pressed_keys: vec!() }
     }
 
-    pub fn update_pressed_keys(&self) {
+    pub fn update_pressed_keys(&mut self) {
         let events_loop = &self.events_loop;
 
-        match self.last_update.elapsed() {
+        let is_too_early = match self.last_update.elapsed() {
             Ok(elapsed) => {
                 let ms = (elapsed.as_secs() * 1_000) + (elapsed.subsec_nanos() / 1_000_000) as u64;
-                if ms < UPDATE_INTERVAL {
-                    return ();
-                }
+                ms < UPDATE_INTERVAL
             },
-            Err(e) => debug!("Could not retrieve elapsed system time: {}", e),
-        }
+            Err(e) => true,
+        };
+
+        let mut state: ElementState = ElementState::Released;
+        let mut virt_key_code: Option<VirtualKeyCode> = Some(VirtualKeyCode::Key0);
 
         events_loop.poll_events(|event| {
             match event {
                 Event::WindowEvent { event, .. } => match event {
-                    WindowEvent::KeyboardInput(state, _, virt_key_code, _) => {
-                        match self.keypress_tx.send((state, virt_key_code.unwrap())) {
-                            Ok(_) => (),
-                            Err(e) => debug!("Could not send keypress_tx: {}", e),
-                        }
+                    WindowEvent::KeyboardInput(_state, _, _virt_key_code, _) => {
+                        state = _state;
+                        virt_key_code = _virt_key_code;
                     },
-
                     WindowEvent::Closed => events_loop.interrupt(),
-
                     _ => (),
                 },
             }
         });
+
+        if virt_key_code.is_none() {
+            return;
+        }
+
+        let key_code = virt_key_code.unwrap();
+        let contains = self.pressed_keys.contains(&key_code);
+
+        if state == ElementState::Pressed {
+            if !contains {
+                self.pressed_keys.push(key_code);
+            }
+        } else {
+            match self.pressed_keys.iter().position(|code| *code == key_code) {
+                Some(index) => self.pressed_keys.remove(index),
+                None => VirtualKeyCode::Key0,
+            };
+        }
+
+//        if is_too_early {
+//            return;
+//        }
+
+        self.last_update = SystemTime::now();
+
+        match self.keypress_tx.send(self.pressed_keys.clone()) {
+            Ok(_) => (),
+            Err(e) => debug!("Could not send keypress_tx: {}", e),
+        }
     }
 }

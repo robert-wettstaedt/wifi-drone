@@ -7,30 +7,30 @@ pub static DRONE_UDP_PORT: usize = 8895;
 pub static FFMPEG_HOST: &'static str = "127.0.0.1";
 pub static FFMPEG_TCP_PORT: usize = 8889;
 
-static HANDSHAKE: &'static str = include_str!("../res/handshake.dat");
-static VIDEO_1_1: &'static str = include_str!("../res/video_1_1.dat");
-static VIDEO_1_2: &'static str = include_str!("../res/video_1_2.dat");
-static VIDEO_2: &'static str = include_str!("../res/video_2.dat");
+static HANDSHAKE_1: &'static str = include_str!("../res/handshake_1.dat");
+static HANDSHAKE_2: &'static str = include_str!("../res/handshake_2.dat");
+static HANDSHAKE_3: &'static str = include_str!("../res/handshake_3.dat");
+static VIDEO: &'static str = include_str!("../res/video.dat");
 static HEARTBEAT: &'static str = include_str!("../res/heartbeat.dat");
 
 pub fn get_tcp_path() -> String {
     format!("tcp://{}:{}?listen", FFMPEG_HOST, FFMPEG_TCP_PORT)
 }
 
-pub fn get_handshake() -> Vec<u8> {
-    return read_data(HANDSHAKE);
+pub fn get_handshake_1() -> Vec<u8> {
+    return read_data(HANDSHAKE_1);
 }
 
-pub fn get_video_1_1() -> Vec<u8> {
-    return read_data(VIDEO_1_1);
+pub fn get_handshake_2() -> Vec<u8> {
+    return read_data(HANDSHAKE_2);
 }
 
-pub fn get_video_1_2() -> Vec<u8> {
-    return read_data(VIDEO_1_2);
+pub fn get_handshake_3() -> Vec<u8> {
+    return read_data(HANDSHAKE_3);
 }
 
-pub fn get_video_2() -> Vec<u8> {
-    return read_data(VIDEO_2);
+pub fn get_video() -> Vec<u8> {
+    return read_data(VIDEO);
 }
 
 pub fn get_heartbeat() -> Vec<u8> {
@@ -60,7 +60,7 @@ mod tests {
 
     #[test]
     fn test_read_file_valid() {
-        let data = read_data(HANDSHAKE);
+        let data = read_data(HANDSHAKE_1);
         assert_eq!(data.len(), 106);
     }
 

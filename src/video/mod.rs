@@ -22,18 +22,18 @@ impl VideoListener {
     }
 }
 
-pub struct Video <'a> {
-    renderer: Renderer<'a>,
+pub struct Video {
+    renderer: Renderer,
     decoder: Option<Decoder>,
     decoder_thread_handle: thread::JoinHandle<Decoder>
 }
 
-impl <'a> Video <'a> {
-    pub fn new(path: &str, window_manager: &'a WindowManager) -> Video <'a> {
+impl Video {
+    pub fn new(path: &str, window_manager: WindowManager) -> Video {
         let (decoder_tx, decoder_rx): (Sender<()>, Receiver<()>) = channel();
         let _path = path.to_owned();
 
-        let renderer = Renderer::new(&window_manager);
+        let renderer = Renderer::new(window_manager);
 
         let builder = thread::Builder::new().name("video::mod".to_string());
         let handle: thread::JoinHandle<Decoder> = match builder.spawn(move || {

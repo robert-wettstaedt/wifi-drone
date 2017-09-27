@@ -20,10 +20,10 @@ pub fn connect(path: String, video_listener: VideoListener, command_listener: Co
     env_logger::init().unwrap();
     let _path = path.as_ref();
 
-    let (keypress_tx, keypress_rx): (Sender<(ElementState, VirtualKeyCode)>, Receiver<(ElementState, VirtualKeyCode)>) = channel();
+    let (keypress_tx, keypress_rx): (Sender<Vec<VirtualKeyCode>>, Receiver<Vec<VirtualKeyCode>>) = channel();
 
     let window_manager = WindowManager::new(keypress_tx);
-    let video = Video::new(_path, &window_manager);
+    let video = Video::new(_path, window_manager);
     if _path.starts_with("tcp:") {
         network::start(keypress_rx, command_listener);
     }

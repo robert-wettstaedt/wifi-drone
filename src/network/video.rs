@@ -24,7 +24,7 @@ impl Video {
             Err(e) => panic!("Couldn't connect to video input socket: {}", e.description()),
         };
 
-        let data = constants::get_video_2();
+        let data = constants::get_video();
 
         return Video { input_stream: input_stream, output_stream: output_stream, data: data };
     }

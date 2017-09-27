@@ -51,13 +51,13 @@ const ELEMENTS: [u32; 6] = [
     2, 3, 0
 ];
 
-pub struct Renderer <'a> {
-    window_manager: &'a WindowManager,
+pub struct Renderer {
+    window_manager: WindowManager,
 }
 
-impl <'a> Renderer <'a> {
-    pub fn new(window_manager: &WindowManager) -> Renderer {
-        Renderer { window_manager: &window_manager }
+impl Renderer {
+    pub fn new(window_manager: WindowManager) -> Renderer {
+        Renderer { window_manager: window_manager }
     }
 
     pub fn prepare_gl(&mut self) {
